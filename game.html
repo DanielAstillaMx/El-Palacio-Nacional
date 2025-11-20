@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Palacio Nacional - Juego</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <!-- Barra de indicadores -->
+    <div class="indicators-bar">
+        <div class="indicators-container">
+            <div class="indicator">
+                <div class="indicator-header">
+                    <span class="indicator-icon">💰</span>
+                    <span>Presupuesto</span>
+                </div>
+                <div class="indicator-bar-container">
+                    <div class="indicator-bar presupuesto" id="barPresupuesto" style="width: 50%">
+                        <span class="indicator-value" id="valuePresupuesto">50</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="indicator">
+                <div class="indicator-header">
+                    <span class="indicator-icon">❤️</span>
+                    <span>Popularidad</span>
+                </div>
+                <div class="indicator-bar-container">
+                    <div class="indicator-bar popularidad" id="barPopularidad" style="width: 50%">
+                        <span class="indicator-value" id="valuePopularidad">50</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="indicator">
+                <div class="indicator-header">
+                    <span class="indicator-icon">⚡</span>
+                    <span>Poder</span>
+                </div>
+                <div class="indicator-bar-container">
+                    <div class="indicator-bar poder" id="barPoder" style="width: 50%">
+                        <span class="indicator-value" id="valuePoder">50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress tracker -->
+    <div class="progress-tracker">
+        Decisión <span class="progress-text" id="progressText">1/8</span>
+    </div>
+
+    <!-- Pantalla de video cinemático (obligatorio) -->
+    <div class="cinematic-screen" id="cinematicScreen">
+        <div class="cinematic-content">
+            <video id="cinematicVideo" class="cinematic-video">
+                <source src="" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+            <div class="cinematic-skip-hint" id="skipHint">
+                Presiona ESPACIO para saltar →
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor principal del juego -->
+    <div class="game-container" id="gameContainer">
+        <!-- Sección de contexto -->
+        <div class="context-section" id="contextSection">
+            <h2 class="context-title" id="contextTitle"></h2>
+            <div class="context-meta" id="contextMeta"></div>
+            <div id="contextText"></div>
+        </div>
+
+        <!-- Sección de decisiones -->
+        <div class="decision-section" id="decisionSection">
+            <h3 class="decision-prompt" id="decisionPrompt"></h3>
+            <div class="options-container" id="optionsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Modal de impacto -->
+    <div class="impact-modal" id="impactModal">
+        <div class="impact-content">
+            <h2 class="impact-title">Consecuencias</h2>
+            <div class="impact-stats" id="impactStats"></div>
+            <button class="continue-button" id="continueButton">
+                Continuar →
+            </button>
+        </div>
+    </div>
+
+    <!-- Pantalla de final -->
+    <div class="ending-screen" id="endingScreen">
+        <div class="ending-content" id="endingContent"></div>
+    </div>
+
+    <!-- Cargar el JavaScript del juego -->
+    <script src="game.js"></script>
+</body>
+</html>

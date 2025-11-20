@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial - El Palacio Nacional</title>
+    <link rel="stylesheet" href="game.css">
+    <link rel="stylesheet" href="tutorial.css">
+</head>
+<body>
+    <!-- Overlay de instrucciones iniciales -->
+    <div class="tutorial-overlay" id="tutorialOverlay">
+        <div class="tutorial-modal">
+            <div class="tutorial-icon">🎓</div>
+            <h1 class="tutorial-welcome-title">Bienvenido, Señor Presidente</h1>
+            <p class="tutorial-welcome-text">
+                Estás a punto de asumir el cargo más importante del país. 
+                Este tutorial te enseñará cómo gobernar México durante tu primer año en el poder.
+            </p>
+            <div class="tutorial-objectives">
+                <h3>Objetivos del juego:</h3>
+                <ul>
+                    <li>🎯 Tomar decisiones políticas cruciales</li>
+                    <li>💰 Gestionar el presupuesto nacional</li>
+                    <li>❤️ Mantener la popularidad con el pueblo</li>
+                    <li>⚡ Conservar tu poder político</li>
+                </ul>
+            </div>
+            <div class="tutorial-warning">
+                <strong>⚠️ Advertencia:</strong> Cada decisión tiene consecuencias. 
+                Equilibra los tres indicadores o enfrentarás el colapso.
+            </div>
+            <button class="tutorial-start-button" onclick="startTutorial()">
+                Comenzar Tutorial
+            </button>
+        </div>
+    </div>
+
+    <!-- Barra de indicadores -->
+    <div class="indicators-bar">
+        <div class="indicators-container">
+            <div class="indicator" id="indicatorPresupuesto">
+                <div class="indicator-header">
+                    <span class="indicator-icon">💰</span>
+                    <span>Presupuesto</span>
+                </div>
+                <div class="indicator-bar-container">
+                    <div class="indicator-bar presupuesto" id="barPresupuesto" style="width: 50%">
+                        <span class="indicator-value" id="valuePresupuesto">50</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="indicator" id="indicatorPopularidad">
+                <div class="indicator-header">
+                    <span class="indicator-icon">❤️</span>
+                    <span>Popularidad</span>
+                </div>
+                <div class="indicator-bar-container">
+                    <div class="indicator-bar popularidad" id="barPopularidad" style="width: 50%">
+                        <span class="indicator-value" id="valuePopularidad">50</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="indicator" id="indicatorPoder">
+                <div class="indicator-header">
+                    <span class="indicator-icon">⚡</span>
+                    <span>Poder</span>
+                </div>
+                <div class="indicator-bar-container">
+                    <div class="indicator-bar poder" id="barPoder" style="width: 50%">
+                        <span class="indicator-value" id="valuePoder">50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltips instructivos -->
+    <div class="tutorial-tooltip" id="tooltipIndicators">
+        <div class="tooltip-arrow"></div>
+        <div class="tooltip-content">
+            <strong>📊 Indicadores del Poder</strong>
+            <p>Estos tres indicadores determinan tu éxito como presidente. Debes equilibrarlos durante todo el juego.</p>
+            <button class="tooltip-next" onclick="nextTooltip()">Entendido →</button>
+        </div>
+    </div>
+
+    <!-- Pantalla cinemática tutorial -->
+    <div class="cinematic-screen" id="cinematicScreen">
+        <div class="cinematic-content">
+            <video id="cinematicVideo" class="cinematic-video">
+                <source src="" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+            <div class="tutorial-video-hint" id="videoHint">
+                <div class="hint-icon">🎬</div>
+                <p>Mira este video para entender el contexto de tu primera decisión</p>
+                <div class="hint-progress">
+                    <div class="progress-bar" id="videoProgress"></div>
+                </div>
+                <p class="hint-skip">Presiona <kbd>ESPACIO</kbd> para saltar</p>
+            </div>
+            <div class="cinematic-skip-hint" id="skipHint">
+                Presiona ESPACIO para saltar →
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor principal del juego -->
+    <div class="game-container" id="gameContainer">
+        <!-- Sección de contexto -->
+        <div class="context-section" id="contextSection">
+            <h2 class="context-title" id="contextTitle"></h2>
+            <div class="context-meta" id="contextMeta"></div>
+            <div id="contextText"></div>
+        </div>
+
+        <!-- Tooltip para contexto -->
+        <div class="tutorial-tooltip" id="tooltipContext">
+            <div class="tooltip-arrow"></div>
+            <div class="tooltip-content">
+                <strong>📋 Contexto de la Situación</strong>
+                <p>Aquí verás el problema que debes resolver. Lee cuidadosamente antes de decidir.</p>
+                <button class="tooltip-next" onclick="nextTooltip()">Siguiente →</button>
+            </div>
+        </div>
+
+        <!-- Sección de decisiones -->
+        <div class="decision-section" id="decisionSection">
+            <h3 class="decision-prompt" id="decisionPrompt"></h3>
+            <div class="options-container" id="optionsContainer"></div>
+        </div>
+
+        <!-- Tooltip para opciones -->
+        <div class="tutorial-tooltip" id="tooltipOptions">
+            <div class="tooltip-arrow"></div>
+            <div class="tooltip-content">
+                <strong>🎯 Tus Opciones</strong>
+                <p>Cada opción muestra sus impactos en tus indicadores. Los números verdes son positivos, los rojos negativos.</p>
+                <p><strong>💡 Consejo:</strong> No existe una opción perfecta. Evalúa los costos y beneficios.</p>
+                <button class="tooltip-next" onclick="nextTooltip()">Siguiente →</button>
+            </div>
+        </div>
+
+        <!-- Indicador de tutorial -->
+        <div class="tutorial-indicator" id="tutorialIndicator">
+            <div class="tutorial-step">
+                <span class="step-number" id="stepNumber">1</span>
+                <span class="step-text" id="stepText">Paso 1 de 5</span>
+            </div>
+            <div class="tutorial-instruction" id="tutorialInstruction">
+                Observa los indicadores en la parte superior
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de impacto -->
+    <div class="impact-modal" id="impactModal">
+        <div class="impact-content">
+            <h2 class="impact-title">Consecuencias</h2>
+            
+            <!-- Tooltip para modal -->
+            <div class="tutorial-tooltip tutorial-tooltip-center" id="tooltipImpact">
+                <div class="tooltip-content">
+                    <strong>📈 Resultados de tu Decisión</strong>
+                    <p>Aquí ves cómo tu elección afectó los indicadores. En el juego completo, habrá 8 decisiones.</p>
+                    <button class="tooltip-next" onclick="nextTooltip()">Entendido →</button>
+                </div>
+            </div>
+
+            <div class="impact-stats" id="impactStats"></div>
+
+            <button class="continue-button" id="continueButton">
+                Continuar →
+            </button>
+        </div>
+    </div>
+
+    <!-- Pantalla de final del tutorial -->
+    <div class="ending-screen" id="tutorialEndScreen">
+        <div class="ending-content">
+            <div class="tutorial-complete-icon">✅</div>
+            <h1 class="ending-title">Tutorial Completado</h1>
+            <p class="ending-subtitle">Estás listo para gobernar México</p>
+            
+            <div class="tutorial-summary">
+                <h3>Lo que aprendiste:</h3>
+                <div class="summary-items">
+                    <div class="summary-item">
+                        <span class="summary-icon">📊</span>
+                        <div>
+                            <strong>Gestión de Indicadores</strong>
+                            <p>Los tres pilares del poder: Presupuesto, Popularidad y Poder Político</p>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-icon">🎬</span>
+                        <div>
+                            <strong>Videos Cinemáticos</strong>
+                            <p>Cada decisión viene con contexto visual</p>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-icon">⚖️</span>
+                        <div>
+                            <strong>Decisiones con Consecuencias</strong>
+                            <p>No hay respuestas correctas, solo diferentes compromisos</p>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-icon">🎯</span>
+                        <div>
+                            <strong>Múltiples Finales</strong>
+                            <p>Tu estilo de gobierno determina tu legado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ending-stats-summary">
+                <div class="ending-stat-item">
+                    <div class="ending-stat-label">💰 Presupuesto Final</div>
+                    <div class="ending-stat-value" style="color: #22c55e;" id="finalPresupuesto">50</div>
+                </div>
+                <div class="ending-stat-item">
+                    <div class="ending-stat-label">❤️ Popularidad Final</div>
+                    <div class="ending-stat-value" style="color: #ef4444;" id="finalPopularidad">50</div>
+                </div>
+                <div class="ending-stat-item">
+                    <div class="ending-stat-label">⚡ Poder Final</div>
+                    <div class="ending-stat-value" style="color: #f59e0b;" id="finalPoder">50</div>
+                </div>
+            </div>
+
+            <div class="tutorial-cta">
+                <p class="cta-text">Ahora enfrentarás 8 decisiones que definirán tu legado como presidente</p>
+                <button class="restart-button" onclick="startFullGame()">
+                    🎮 Comenzar Juego Completo
+                </button>
+                <button class="menu-button" onclick="goToMenu()">
+                    🏠 Volver al Menú
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="tutorial.js"></script>
+</body>
+</html>
