@@ -10,7 +10,8 @@ const gameState = {
     popularidad: 50,
     poder: 50,
     currentDecision: 0,
-    decisions: []
+    decisions: [],
+    randomizedOrder: [] // Orden aleatorizado de decisiones (excluyendo la introducción)
 };
 
 // ============================================
@@ -49,7 +50,7 @@ const decisionsData = [
     {
         id: 1,
         video: "assets/001.mp4",
-        title: "🏛️ Decisión 1: La Bomba Fiscal",
+        title: "🏛️ Decisión: La Bomba Fiscal",
         meta: "Mes 1 - Enero 2025",
         context: [
             'Tu Secretario de Hacienda, <strong>Roberto Villareal</strong>, entra a tu despacho con expresión grave. "Presidente, tenemos un problema serio. La administración anterior ocultó un déficit de <strong>$200 mil millones de pesos</strong>. No hay recursos suficientes para cumplir las promesas de campaña. Necesitamos actuar de inmediato."',
@@ -77,7 +78,7 @@ const decisionsData = [
     {
         id: 2,
         video: "assets/002.mp4",
-        title: "🌀 Decisión 2: El Huracán",
+        title: "🌀 Decisión: El Huracán",
         meta: "Mes 2 - Febrero 2025",
         context: [
             'Un huracán categoría 4 amenaza la costa del Pacífico. <strong>50,000 personas</strong> están en riesgo. El Fondo de Desastres Naturales tiene $5,000 millones, pero cancelar "Jóvenes Construyendo el Futuro" liberaría otros $8,000 millones para reforzar la prevención.',
@@ -105,7 +106,7 @@ const decisionsData = [
     {
         id: 3,
         video: "assets/003.mp4",
-        title: "📚 Decisión 3: El Sindicato de Maestros",
+        title: "📚 Decisión: El Sindicato de Maestros",
         meta: "Mes 3 - Marzo 2025",
         context: [
             'El sindicato de maestros convoca a paro nacional. Exigen <strong>15% de aumento salarial</strong> y rechazan toda evaluación de desempeño. Amenazan con paralizar el sistema educativo de 25 millones de estudiantes.',
@@ -133,7 +134,7 @@ const decisionsData = [
     {
         id: 4,
         video: "assets/004.mp4",
-        title: "⚖️ Decisión 4: El Escándalo de Corrupción",
+        title: "⚖️ Decisión: El Escándalo de Corrupción",
         meta: "Mes 4 - Abril 2025",
         context: [
             'Los medios revelan que <strong>Roberto Villareal</strong>, tu mejor amigo y Secretario de Hacienda, adjudicó contratos a empresas de su familia por $500 millones. Él lo niega categóricamente y te llama llorando: "Sabes que soy inocente. Son mentiras de la oposición."',
@@ -161,7 +162,7 @@ const decisionsData = [
     {
         id: 5,
         video: "assets/005.mp4",
-        title: "🚨 Decisión 5: Crisis de Seguridad",
+        title: "🚨 Decisión: Crisis de Seguridad",
         meta: "Mes 6 - Junio 2025",
         context: [
             'La violencia se disparó <strong>35% en seis meses</strong>. Grupos criminales controlan 5 estados y desafían abiertamente al gobierno. El General Martínez propone militarización total. ONGs exigen estrategia social.',
@@ -189,7 +190,7 @@ const decisionsData = [
     {
         id: 6,
         video: "assets/006.mp4",
-        title: "🏥 Decisión 6: Colapso del Sistema de Salud",
+        title: "🏥 Decisión: Colapso del Sistema de Salud",
         meta: "Mes 8 - Agosto 2025",
         context: [
             'Los hospitales públicos están colapsados. <strong>Desabasto de medicamentos del 60%</strong>, equipo obsoleto, médicos renunciando masivamente. Una niña de 8 años murió esperando quimioterapia que nunca llegó. Su foto está en todos los periódicos.',
@@ -217,7 +218,7 @@ const decisionsData = [
     {
         id: 7,
         video: "assets/007.mp4",
-        title: "🚄 Decisión 7: El Mega-Proyecto",
+        title: "🚄 Decisión: El Mega-Proyecto",
         meta: "Mes 10 - Octubre 2025",
         context: [
             'Propones el <strong>"Tren del Sureste"</strong> que conectará 5 estados y costará $150 mil millones. Promete desarrollo económico, empleos y turismo. Pero requiere endeudamiento masivo y hay resistencia ambiental.',
@@ -245,7 +246,7 @@ const decisionsData = [
     {
         id: 8,
         video: "assets/008.mp4",
-        title: "⚖️ Decisión 8: La Encrucijada Democrática",
+        title: "⚖️ Decisión: La Encrucijada Democrática",
         meta: "Mes 12 - Diciembre 2025",
         context: [
             'La oposición tiene <strong>mayoría en el Congreso</strong> y bloquea absolutamente todas tus iniciativas. El país está paralizado. Puedes gobernar por decreto de emergencia (legal pero autoritario) o ceder a sus exigencias.',
@@ -267,6 +268,426 @@ const decisionsData = [
                 title: "Convocar diálogo nacional multipartidario",
                 description: "Buscar consenso amplio con todos los sectores. Lento pero construye institucionalidad.",
                 impacts: { presupuesto: 5, popularidad: 5, poder: -20 }
+            }
+        ]
+    },
+    {
+        id: 9,
+        video: "assets/009.mp4",
+        title: "⚖️ Decisión: Reforma Judicial",
+        meta: "Mes 13 - Enero 2026",
+        context: [
+            'Se propone elegir jueces y magistrados por voto popular. El país se divide: unos lo ven como democratización, otros como riesgo a la independencia judicial.',
+            'Los expertos constitucionales advierten sobre las implicaciones. Los partidos políticos toman posiciones encontradas. La decisión marcará el futuro del sistema judicial mexicano.'
+        ],
+        prompt: "¿Cómo enfrentarás la reforma judicial?",
+        options: [
+            {
+                title: "Impulsar la reforma completa",
+                description: "Democratizar la justicia mediante elección popular de jueces. Popular pero arriesgado para la independencia judicial.",
+                impacts: { presupuesto: -10, popularidad: 15, poder: -10 }
+            },
+            {
+                title: "Negociar versión moderada",
+                description: "Buscar un punto medio que satisfaga a ambas partes. Equilibrio pero puede no contentar a nadie.",
+                impacts: { presupuesto: -5, popularidad: 5, poder: 0 }
+            },
+            {
+                title: "Rechazarla por inestabilidad institucional",
+                description: "Mantener el sistema actual para preservar la independencia judicial. Conservador pero estable.",
+                impacts: { presupuesto: 10, popularidad: -10, poder: 15 }
+            }
+        ]
+    },
+    {
+        id: 10,
+        video: "assets/010.mp4",
+        title: "📱 Decisión: Influencers en Palacio",
+        meta: "Mes 14 - Febrero 2026",
+        context: [
+            'Tu equipo de comunicación propone invitar a influencers para transmitir desde Palacio Nacional y mejorar tu imagen con los jóvenes.',
+            'Algunos ven esto como modernización necesaria. Otros lo consideran una banalización de la institución presidencial. Las redes sociales ya están especulando.'
+        ],
+        prompt: "¿Permitirás influencers en Palacio Nacional?",
+        options: [
+            {
+                title: "Aceptar la colaboración mediática",
+                description: "Abrir las puertas a influencers para conectar con las nuevas generaciones. Moderno pero controvertido.",
+                impacts: { presupuesto: -5, popularidad: 15, poder: -5 }
+            },
+            {
+                title: "Solo permitir difusión institucional",
+                description: "Permitir transmisiones pero con control gubernamental del contenido. Equilibrio entre modernidad y seriedad.",
+                impacts: { presupuesto: 0, popularidad: 5, poder: 5 }
+            },
+            {
+                title: "Prohibir totalmente influencers",
+                description: "Mantener la solemnidad institucional sin concesiones. Tradicional pero desconectado de la juventud.",
+                impacts: { presupuesto: 5, popularidad: -10, poder: 10 }
+            }
+        ]
+    },
+    {
+        id: 11,
+        video: "assets/011.mp4",
+        title: "🌡️ Decisión: Crisis Ambiental",
+        meta: "Mes 15 - Marzo 2026",
+        context: [
+            'Una ola de calor extremo afecta varias regiones del país. La población exige declarar emergencia ambiental.',
+            'Los hospitales reportan casos de deshidratación masiva. Los agricultores pierden cosechas. El país observa tu respuesta ante esta crisis climática.'
+        ],
+        prompt: "¿Cómo responderás a la emergencia climática?",
+        options: [
+            {
+                title: "Declarar emergencia nacional",
+                description: "Activar todos los recursos del estado para enfrentar la crisis. Costoso pero muestra compromiso real.",
+                impacts: { presupuesto: -15, popularidad: 15, poder: -5 }
+            },
+            {
+                title: "Apoyar con subsidios eléctricos",
+                description: "Ayudar a la población con costos de energía sin declarar emergencia. Solución intermedia y pragmática.",
+                impacts: { presupuesto: -10, popularidad: 10, poder: 0 }
+            },
+            {
+                title: "Minimizar la situación",
+                description: "Tratar el tema como un fenómeno temporal sin medidas extraordinarias. Ahorra recursos pero genera descontento.",
+                impacts: { presupuesto: 5, popularidad: -20, poder: 10 }
+            }
+        ]
+    },
+    {
+        id: 12,
+        video: "assets/012.mp4",
+        title: "💻 Decisión: Escándalo de Corrupción Tecnológica",
+        meta: "Mes 16 - Abril 2026",
+        context: [
+            'Una filtración revela que funcionarios usaron contratos con una empresa de software fantasma para comprar equipos a sobreprecio.',
+            'Los medios exigen transparencia. La oposición habla de corrupción sistémica. Tu gabinete está dividido sobre cómo manejar la crisis.'
+        ],
+        prompt: "¿Cómo manejarás el escándalo tecnológico?",
+        options: [
+            {
+                title: "Abrir investigación pública",
+                description: "Transparencia total y rendición de cuentas. Democrático pero puede exponer más casos.",
+                impacts: { presupuesto: -5, popularidad: 15, poder: -10 }
+            },
+            {
+                title: "Sancionar discretamente a los implicados",
+                description: "Resolver el problema internamente sin escándalo público. Eficiente pero poco transparente.",
+                impacts: { presupuesto: 0, popularidad: 5, poder: 0 }
+            },
+            {
+                title: "Encubrir para evitar crisis política",
+                description: "Negar y minimizar para proteger la imagen del gobierno. Peligroso si se descubre la verdad.",
+                impacts: { presupuesto: 5, popularidad: -15, poder: 10 }
+            }
+        ]
+    },
+    {
+        id: 13,
+        video: "assets/013.mp4",
+        title: "🤖 Decisión: IA y Empleo",
+        meta: "Mes 17 - Mayo 2026",
+        context: [
+            'Empresas tecnológicas comienzan a reemplazar trabajadores con inteligencia artificial. Sindicatos piden intervención del gobierno.',
+            'El debate divide al país: ¿progreso tecnológico o protección laboral? Las empresas amenazan con desinversión si se regula demasiado.'
+        ],
+        prompt: "¿Cómo regularás la inteligencia artificial?",
+        options: [
+            {
+                title: "Regular la IA y proteger empleos",
+                description: "Establecer límites a la automatización para preservar trabajos. Popular entre trabajadores pero impopular con empresarios.",
+                impacts: { presupuesto: -15, popularidad: 20, poder: -5 }
+            },
+            {
+                title: "Fomentar la automatización",
+                description: "Acelerar la adopción de IA para aumentar competitividad. Eficiente económicamente pero genera desempleo.",
+                impacts: { presupuesto: 10, popularidad: -10, poder: 10 }
+            },
+            {
+                title: "Crear un impuesto a robots",
+                description: "Gravar la automatización para financiar programas de reconversión laboral. Solución innovadora pero compleja.",
+                impacts: { presupuesto: 5, popularidad: 5, poder: -10 }
+            }
+        ]
+    },
+    {
+        id: 14,
+        video: "assets/014.mp4",
+        title: "⛽ Decisión: Gasolinazo 2.0",
+        meta: "Mes 18 - Junio 2026",
+        context: [
+            'El precio internacional del petróleo se dispara y Hacienda propone aumentar el costo del combustible. El país amenaza con protestas.',
+            'Recuerdas el "gasolinazo" de administraciones anteriores. Las calles podrían incendiarse. Pero las finanzas públicas lo requieren.'
+        ],
+        prompt: "¿Cómo manejarás el aumento del precio de la gasolina?",
+        options: [
+            {
+                title: "Subir el precio gradualmente",
+                description: "Aumento controlado para no impactar de golpe. Responsable fiscalmente pero impopular.",
+                impacts: { presupuesto: 15, popularidad: -10, poder: 0 }
+            },
+            {
+                title: "Congelar precios temporalmente",
+                description: "Absorber el costo con subsidios gubernamentales. Popular pero insostenible a largo plazo.",
+                impacts: { presupuesto: -10, popularidad: 10, poder: -5 }
+            },
+            {
+                title: "Culpar a la administración anterior",
+                description: "Desviar responsabilidad política. Estratégico pero poco honesto.",
+                impacts: { presupuesto: 0, popularidad: -5, poder: 10 }
+            }
+        ]
+    },
+    {
+        id: 15,
+        video: "assets/015.mp4",
+        title: "📺 Decisión: Reality Show Presidencial",
+        meta: "Mes 19 - Julio 2026",
+        context: [
+            'Una televisora propone grabar un reality show sobre tu vida diaria en Los Pinos. Dicen que humanizará tu figura ante el público.',
+            'Tu equipo de comunicación está dividido. Algunos ven oportunidad de conexión, otros ven riesgo de frivolización del cargo.'
+        ],
+        prompt: "¿Aceptarás el reality show presidencial?",
+        options: [
+            {
+                title: "Aceptar y mostrar transparencia",
+                description: "Abrir completamente las puertas para mostrar el día a día. Muy popular pero arriesgado.",
+                impacts: { presupuesto: -5, popularidad: 20, poder: -10 }
+            },
+            {
+                title: "Negociar edición controlada",
+                description: "Permitir el programa pero con supervisión del contenido. Equilibrio entre exposición y control.",
+                impacts: { presupuesto: 0, popularidad: 10, poder: 0 }
+            },
+            {
+                title: "Rechazar por dignidad institucional",
+                description: "Mantener la seriedad del cargo sin concesiones mediáticas. Tradicional pero puede parecer distante.",
+                impacts: { presupuesto: 0, popularidad: -10, poder: 10 }
+            }
+        ]
+    },
+    {
+        id: 16,
+        video: "assets/016.mp4",
+        title: "🔐 Decisión: Ciberataque al SAT",
+        meta: "Mes 20 - Agosto 2026",
+        context: [
+            'Un grupo de hackers filtra datos de millones de contribuyentes. La ciudadanía exige explicaciones por la vulnerabilidad del sistema.',
+            'Los datos personales y financieros están expuestos. Los expertos en ciberseguridad advierten sobre el riesgo de fraude masivo. El país observa tu respuesta.'
+        ],
+        prompt: "¿Cómo responderás al ciberataque?",
+        options: [
+            {
+                title: "Pagar rescate digital para recuperar datos",
+                description: "Negociar con los hackers para proteger la información ciudadana. Rápido pero peligroso y costoso.",
+                impacts: { presupuesto: -20, popularidad: -5, poder: 5 }
+            },
+            {
+                title: "Negociar con los hackers anónimamente",
+                description: "Buscar solución discreta sin reconocer públicamente el pago. Pragmático pero éticamente cuestionable.",
+                impacts: { presupuesto: -10, popularidad: 0, poder: -5 }
+            },
+            {
+                title: "Negarse y reconstruir el sistema",
+                description: "Rechazar cualquier negociación y reconstruir desde cero. Costoso y lento pero muestra firmeza.",
+                impacts: { presupuesto: -25, popularidad: 15, poder: -10 }
+            }
+        ]
+    },
+    {
+        id: 17,
+        video: "assets/017.mp4",
+        title: "🚜 Decisión: Paro de Agricultores",
+        meta: "Mes 21 - Septiembre 2026",
+        context: [
+            'Productores agrícolas bloquean carreteras federales en varios estados. Reclaman precios justos para sus cosechas y subsidios atrasados. La protesta amenaza con desabastecer alimentos básicos en todo el país.',
+            'Las ciudades comienzan a sentir el desabasto. Los supermercados reportan escasez. El tiempo se agota antes de que la crisis alimentaria se vuelva crítica.'
+        ],
+        prompt: "¿Cómo resolverás el conflicto agrícola?",
+        options: [
+            {
+                title: "Negociar subsidios de emergencia",
+                description: "Ceder a las demandas para desbloquear las carreteras rápidamente. Popular pero costoso.",
+                impacts: { presupuesto: -15, popularidad: 15, poder: -5 }
+            },
+            {
+                title: "Enviar fuerzas de seguridad para liberar carreteras",
+                description: "Usar la fuerza para desbloquear las vías. Efectivo pero genera confrontación y descontento social.",
+                impacts: { presupuesto: -5, popularidad: -20, poder: 15 }
+            },
+            {
+                title: "Convocar diálogo público con líderes campesinos",
+                description: "Buscar solución negociada con transparencia total. Democrático pero puede tomar tiempo.",
+                impacts: { presupuesto: -10, popularidad: 10, poder: 0 }
+            }
+        ]
+    },
+    {
+        id: 18,
+        video: "assets/018.mp4",
+        title: "🔮 Decisión: El Chamán del Palacio",
+        meta: "Mes 22 - Octubre 2026",
+        context: [
+            'Un chamán realiza una ceremonia de "limpia energética" dentro del Palacio Nacional. El evento se viraliza y divide a la opinión pública entre quienes lo ven como una tradición cultural y quienes lo consideran una falta de seriedad institucional.',
+            'Los memes circulan en redes sociales. La prensa internacional pregunta sobre el evento. Tu gabinete está dividido sobre cómo manejar la situación.'
+        ],
+        prompt: "¿Cómo manejarás el escándalo del chamán?",
+        options: [
+            {
+                title: "Promoverlo como acto cultural nacional",
+                description: "Defender la ceremonia como parte de las tradiciones mexicanas. Popular entre ciertos sectores pero criticado por otros.",
+                impacts: { presupuesto: 0, popularidad: 15, poder: -10 }
+            },
+            {
+                title: "Minimizar el hecho y mantener discreción",
+                description: "No hacer declaraciones y dejar que pase el escándalo. Neutral pero puede interpretarse como evasión.",
+                impacts: { presupuesto: 0, popularidad: 0, poder: 5 }
+            },
+            {
+                title: "Prohibir expresamente rituales en el Palacio",
+                description: "Establecer reglas claras sobre el uso del espacio institucional. Serio pero puede parecer intransigente.",
+                impacts: { presupuesto: 0, popularidad: -10, poder: 10 }
+            }
+        ]
+    },
+    {
+        id: 19,
+        video: "assets/019.mp4",
+        title: "🔫 Decisión: Asesinato de Funcionario Municipal",
+        meta: "Mes 23 - Noviembre 2026",
+        context: [
+            'Un funcionario municipal es asesinado en circunstancias sospechosas. La prensa exige respuestas y la oposición culpa a la falta de seguridad nacional.',
+            'Las especulaciones sobre el motivo del crimen circulan. ¿Fue un ajuste de cuentas? ¿Un mensaje político? El país espera una respuesta firme.'
+        ],
+        prompt: "¿Cómo responderás al asesinato?",
+        options: [
+            {
+                title: "Enviar refuerzos y asumir control del municipio",
+                description: "Intervención federal directa para garantizar seguridad. Muestra firmeza pero puede interpretarse como autoritario.",
+                impacts: { presupuesto: -10, popularidad: 5, poder: 10 }
+            },
+            {
+                title: "Dejar que las autoridades locales investiguen",
+                description: "Respetar la autonomía municipal y no intervenir. Federalista pero puede parecer indiferente.",
+                impacts: { presupuesto: 0, popularidad: -10, poder: 0 }
+            },
+            {
+                title: "Ordenar una investigación federal pública",
+                description: "Crear comisión especial con transparencia total. Democrático pero consume recursos y tiempo.",
+                impacts: { presupuesto: -5, popularidad: 10, poder: -5 }
+            }
+        ]
+    },
+    {
+        id: 20,
+        video: "assets/020.mp4",
+        title: "💥 Decisión: Explosión de Gas LP",
+        meta: "Mes 24 - Diciembre 2026",
+        context: [
+            'Una pipa de gas LP explota en una zona habitada. Hay decenas de heridos y daños materiales graves. La población exige regular a las empresas distribuidoras.',
+            'Las familias de las víctimas piden justicia. Los medios cuestionan la falta de regulación. El país observa si actuarás o minimizarás la tragedia.'
+        ],
+        prompt: "¿Cómo responderás a la tragedia del gas LP?",
+        options: [
+            {
+                title: "Implementar nueva ley de seguridad energética",
+                description: "Crear regulación estricta para prevenir futuros accidentes. Costoso pero muestra compromiso real con la seguridad ciudadana.",
+                impacts: { presupuesto: -15, popularidad: 20, poder: -5 }
+            },
+            {
+                title: "Culpar a la empresa privada y sancionarla",
+                description: "Responsabilizar a la empresa sin crear nueva regulación. Rápido y popular pero no previene futuros casos.",
+                impacts: { presupuesto: 5, popularidad: 5, poder: 0 }
+            },
+            {
+                title: "Negar responsabilidad del gobierno",
+                description: "Argumentar que es responsabilidad de la empresa privada. Ahorra recursos pero genera descontento social.",
+                impacts: { presupuesto: 0, popularidad: -15, poder: 10 }
+            }
+        ]
+    },
+    {
+        id: 21,
+        video: "assets/021.mp4",
+        title: "🏛️ Decisión: Ataque al Palacio Municipal",
+        meta: "Mes 25 - Enero 2027",
+        context: [
+            'Manifestantes enfurecidos irrumpen con violencia en el palacio de gobierno de un municipio tras acusar corrupción y desvío de recursos. El país observa con preocupación la escalada del descontento.',
+            'Las imágenes del ataque circulan en redes sociales. Algunos lo celebran como justicia popular, otros lo condenan como vandalismo. Tu respuesta marcará el precedente.'
+        ],
+        prompt: "¿Cómo responderás al ataque al palacio municipal?",
+        options: [
+            {
+                title: "Enviar Guardia Nacional para restablecer el orden",
+                description: "Usar la fuerza para recuperar el control del edificio. Muestra autoridad pero puede generar más violencia.",
+                impacts: { presupuesto: -10, popularidad: -15, poder: 20 }
+            },
+            {
+                title: "Destituir al alcalde y convocar elecciones locales",
+                description: "Ceder a las demandas de los manifestantes mediante cambio político. Democrático pero puede sentar precedente peligroso.",
+                impacts: { presupuesto: -5, popularidad: 10, poder: -5 }
+            },
+            {
+                title: "Intervenir mediáticamente para apaciguar tensiones",
+                description: "Buscar solución diplomática sin usar fuerza ni ceder completamente. Equilibrio pero puede no satisfacer a nadie.",
+                impacts: { presupuesto: 0, popularidad: 5, poder: 0 }
+            }
+        ]
+    },
+    {
+        id: 22,
+        video: "assets/022.mp4",
+        title: "🌿 Decisión: Activista Desaparecido",
+        meta: "Mes 26 - Febrero 2027",
+        context: [
+            'Un activista ambiental desaparece tras denunciar intereses privados en un área natural protegida. La comunidad internacional exige una respuesta firme del gobierno.',
+            'Las organizaciones de derechos humanos presionan. Los medios internacionales cubren el caso. Tu respuesta afectará la imagen de México en el mundo.'
+        ],
+        prompt: "¿Cómo responderás a la desaparición del activista?",
+        options: [
+            {
+                title: "Crear una comisión especial de búsqueda",
+                description: "Destinar recursos significativos para encontrar al activista. Muestra compromiso pero costoso y puede no tener resultados.",
+                impacts: { presupuesto: -10, popularidad: 20, poder: -5 }
+            },
+            {
+                title: "Declarar apoyo simbólico sin comprometer recursos",
+                description: "Mostrar preocupación públicamente sin acciones concretas. Barato pero puede parecer insuficiente.",
+                impacts: { presupuesto: 0, popularidad: 5, poder: 0 }
+            },
+            {
+                title: "Ignorar el caso por falta de pruebas",
+                description: "No actuar hasta tener más información. Ahorra recursos pero genera crítica internacional y descontento.",
+                impacts: { presupuesto: 0, popularidad: -15, poder: 10 }
+            }
+        ]
+    },
+    {
+        id: 23,
+        video: "assets/023.mp4",
+        title: "🗑️ Decisión: Crisis de Basura",
+        meta: "Mes 27 - Marzo 2027",
+        context: [
+            'Varias ciudades del país colapsan por la acumulación de basura debido a un paro de trabajadores de limpieza. Las calles se llenan de desechos y las enfermedades aumentan.',
+            'La crisis sanitaria se agrava día a día. Los hospitales reportan aumento de casos de enfermedades gastrointestinales. El país exige una solución inmediata.'
+        ],
+        prompt: "¿Cómo resolverás la crisis de basura?",
+        options: [
+            {
+                title: "Ofrecer aumentos y resolver el conflicto laboral",
+                description: "Negociar con los trabajadores para que regresen a sus labores. Popular pero costoso a largo plazo.",
+                impacts: { presupuesto: -15, popularidad: 15, poder: -5 }
+            },
+            {
+                title: "Llevar al ejército a limpiar las calles",
+                description: "Usar fuerzas militares para resolver la emergencia sanitaria. Efectivo pero puede generar críticas por militarización.",
+                impacts: { presupuesto: -5, popularidad: -10, poder: 15 }
+            },
+            {
+                title: "Contratar empresas privadas de emergencia",
+                description: "Subcontratar servicios de limpieza mientras se resuelve el conflicto. Rápido pero costoso y puede debilitar a los trabajadores públicos.",
+                impacts: { presupuesto: 10, popularidad: -5, poder: 5 }
             }
         ]
     }
@@ -358,6 +779,52 @@ const DOM = {
 };
 
 // ============================================
+// ALEATORIZAR DECISIONES
+// ============================================
+function randomizeDecisions() {
+    // La decisión 0 (introducción) siempre va primero
+    // Aleatorizar el resto de decisiones (ID 1-23)
+    const decisionsToRandomize = [];
+    for (let i = 1; i < decisionsData.length; i++) {
+        decisionsToRandomize.push(i);
+    }
+    
+    // Algoritmo Fisher-Yates para aleatorización
+    for (let i = decisionsToRandomize.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [decisionsToRandomize[i], decisionsToRandomize[j]] = [decisionsToRandomize[j], decisionsToRandomize[i]];
+    }
+    
+    // Guardar el orden aleatorizado (0 siempre primero, luego las aleatorizadas)
+    gameState.randomizedOrder = [0, ...decisionsToRandomize];
+}
+
+// ============================================
+// GENERAR META DINÁMICO
+// ============================================
+function generateDynamicMeta(decisionIndex) {
+    // Decisión 0 es la introducción
+    if (decisionIndex === 0) {
+        return "Aprende las Mecánicas";
+    }
+    
+    // Meses del año
+    const meses = [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    
+    // Calcular mes y año basado en el índice de decisión
+    // Decisión 1 = Mes 1 (Enero 2025), Decisión 2 = Mes 2 (Febrero 2025), etc.
+    // Decisión 13 = Mes 13 (Enero 2026), etc.
+    const mesNumero = decisionIndex;
+    const año = 2025 + Math.floor((mesNumero - 1) / 12); // Mes 1-12 = 2025, Mes 13-24 = 2026, etc.
+    const mesNombre = meses[(mesNumero - 1) % 12];
+    
+    return `Mes ${mesNumero} - ${mesNombre} ${año}`;
+}
+
+// ============================================
 // INICIALIZACIÓN
 // ============================================
 function initGame() {
@@ -393,6 +860,9 @@ function initGame() {
     
     // Event listener para saltar video con ESPACIO
     document.addEventListener('keydown', handleKeyPress);
+
+    // Aleatorizar orden de decisiones
+    randomizeDecisions();
 
     // Inicializar indicadores
     updateIndicators();
@@ -467,17 +937,20 @@ function endCinematic(resolve) {
 // CARGAR DECISIÓN
 // ============================================
 async function loadDecision() {
-    const decision = decisionsData[gameState.currentDecision];
+    // Obtener el índice real de la decisión usando el orden aleatorizado
+    const realDecisionIndex = gameState.randomizedOrder[gameState.currentDecision];
+    const decision = decisionsData[realDecisionIndex];
     
     // Actualizar progress tracker
-    DOM.progressText.textContent = `${gameState.currentDecision + 1}/8`;
+    DOM.progressText.textContent = `${gameState.currentDecision + 1}/${decisionsData.length}`;
 
     // Reproducir cinemática (obligatoria)
     await playCinematic(decision.video);
 
     // Cargar contexto
     DOM.contextTitle.textContent = decision.title;
-    DOM.contextMeta.textContent = decision.meta;
+    // Generar meta dinámico basado en el orden de aparición (no en el ID original)
+    DOM.contextMeta.textContent = generateDynamicMeta(gameState.currentDecision);
     
     let contextHTML = '';
     decision.context.forEach(p => {
@@ -591,7 +1064,9 @@ function renderOptions(options) {
 // SELECCIONAR OPCIÓN
 // ============================================
 function selectOption(optionIndex) {
-    const decision = decisionsData[gameState.currentDecision];
+    // Obtener el índice real de la decisión usando el orden aleatorizado
+    const realDecisionIndex = gameState.randomizedOrder[gameState.currentDecision];
+    const decision = decisionsData[realDecisionIndex];
     const option = decision.options[optionIndex];
     
     // Guardar decisión
