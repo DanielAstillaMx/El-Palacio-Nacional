@@ -840,6 +840,12 @@ function initGame() {
     DOM.cinematicScreen = document.getElementById('cinematicScreen');
     DOM.cinematicVideo = document.getElementById('cinematicVideo');
     DOM.skipHint = document.getElementById('skipHint');
+    
+    // Configurar volumen inicial del video
+    if (DOM.cinematicVideo) {
+        DOM.cinematicVideo.volume = 0.8; // 80% de volumen
+        DOM.cinematicVideo.muted = false; // Permitir sonido
+    }
 
     DOM.gameContainer = document.getElementById('gameContainer');
     DOM.contextTitle = document.getElementById('contextTitle');
@@ -860,6 +866,10 @@ function initGame() {
     
     // Event listener para saltar video con ESPACIO
     document.addEventListener('keydown', handleKeyPress);
+
+    // Asegurar que el contenedor del juego esté oculto inicialmente
+    DOM.gameContainer.classList.remove('active');
+    DOM.cinematicScreen.classList.remove('active');
 
     // Aleatorizar orden de decisiones
     randomizeDecisions();
@@ -886,34 +896,196 @@ function handleKeyPress(e) {
 // ============================================
 function playCinematic(videoSrc) {
     return new Promise((resolve) => {
-        // Configurar video
-        DOM.cinematicVideo.src = videoSrc;
-        
-        // Mostrar pantalla cinemática
+        // Limpiar cualquier listener anterior
+        const oldResolve = DOM.cinematicScreen.cinematicResolve;
+        if (oldResolve) {
+            // Si hay un resolve pendiente, resolverlo primero
+            oldResolve();
+        }
+
+        // Pausar y resetear el video antes de cargar uno nuevo
+        DOM.cinematicVideo.pause();
+        DOM.cinematicVideo.currentTime = 0;
+
+        // Mostrar pantalla cinemática INMEDIATAMENTE
         DOM.cinematicScreen.classList.add('active');
         DOM.gameContainer.classList.remove('active');
+        DOM.skipHint.classList.remove('visible');
 
-        // Reproducir video
-        DOM.cinematicVideo.play();
+        // Configurar video - Asegurar volumen ANTES de cargar
+        DOM.cinematicVideo.volume = 0.8; // Configurar volumen al 80%
+        DOM.cinematicVideo.muted = false; // Permitir sonido
+        DOM.cinematicVideo.src = videoSrc;
+        DOM.cinematicVideo.load(); // Forzar recarga del video
+        
+        // Asegurar que el volumen se mantenga después de cargar
+        DOM.cinematicVideo.addEventListener('loadedmetadata', () => {
+            DOM.cinematicVideo.volume = 0.8;
+            DOM.cinematicVideo.muted = false;
+        }, { once: true });
 
-        // Mostrar hint después de 2 segundos
-        setTimeout(() => {
-            DOM.skipHint.classList.add('visible');
-        }, 2000);
+        // Timeout de seguridad: si el video no carga en 10 segundos, continuar
+        let timeoutId = setTimeout(() => {
+            console.warn('Timeout: el video no se cargó, continuando...');
+            DOM.cinematicVideo.removeEventListener('canplay', handleCanPlay);
+            DOM.cinematicVideo.removeEventListener('loadeddata', handleLoadedData);
+            DOM.cinematicVideo.removeEventListener('error', handleError);
+            DOM.cinematicVideo.removeEventListener('ended', handleEnded);
+            endCinematic(resolve);
+        }, 10000);
+
+        // Función para manejar cuando el video está listo
+        const handleCanPlay = () => {
+            DOM.cinematicVideo.removeEventListener('canplay', handleCanPlay);
+            DOM.cinematicVideo.removeEventListener('loadeddata', handleLoadedData);
+            DOM.cinematicVideo.removeEventListener('error', handleError);
+            
+            // Limpiar timeout ya que el video se cargó
+            if (timeoutId) clearTimeout(timeoutId);
+            
+            // Asegurar que el volumen esté configurado ANTES de intentar reproducir
+            DOM.cinematicVideo.volume = 0.8;
+            DOM.cinematicVideo.muted = false;
+            
+            // Intentar reproducir con sonido primero
+            const playPromise = DOM.cinematicVideo.play();
+            
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        // Video reproducido exitosamente
+                        // Asegurar que el volumen y muted estén correctamente configurados
+                        DOM.cinematicVideo.volume = 0.8;
+                        DOM.cinematicVideo.muted = false;
+                        
+                        // Verificar si realmente está reproduciéndose con sonido
+                        if (DOM.cinematicVideo.muted) {
+                            // Si por alguna razón está silenciado, intentar desactivarlo
+                            DOM.cinematicVideo.muted = false;
+                        }
+                        
+                        // Mostrar hint después de 2 segundos
+                        setTimeout(() => {
+                            DOM.skipHint.classList.add('visible');
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        console.warn('No se pudo reproducir con sonido, intentando silenciado:', error);
+                        // Si falla por políticas del navegador, intentar silenciado temporalmente
+                        DOM.cinematicVideo.muted = true;
+                        const mutedPlayPromise = DOM.cinematicVideo.play();
+                        if (mutedPlayPromise !== undefined) {
+                            mutedPlayPromise
+                                .then(() => {
+                                    // Video reproducido silenciado - intentar activar sonido después de un momento
+                                    setTimeout(() => {
+                                        // Intentar desactivar muted después de que el video esté reproduciéndose
+                                        try {
+                                            DOM.cinematicVideo.muted = false;
+                                            DOM.cinematicVideo.volume = 0.8;
+                                        } catch (e) {
+                                            console.warn('No se pudo activar el sonido automáticamente');
+                                        }
+                                    }, 500);
+                                    
+                                    setTimeout(() => {
+                                        DOM.skipHint.classList.add('visible');
+                                    }, 2000);
+                                })
+                                .catch(mutedError => {
+                                    console.error('Error al reproducir video incluso silenciado:', mutedError);
+                                    setTimeout(() => {
+                                        DOM.skipHint.classList.add('visible');
+                                    }, 2000);
+                                });
+                        } else {
+                            setTimeout(() => {
+                                DOM.skipHint.classList.add('visible');
+                            }, 2000);
+                        }
+                    });
+            } else {
+                // Si play() no retorna una promesa, el video ya está reproduciéndose
+                // Asegurar que el volumen esté configurado
+                DOM.cinematicVideo.volume = 0.8;
+                DOM.cinematicVideo.muted = false;
+                setTimeout(() => {
+                    DOM.skipHint.classList.add('visible');
+                }, 2000);
+            }
+        };
+
+        // Función alternativa para cuando los datos están cargados
+        const handleLoadedData = () => {
+            // Si canplay no se dispara, intentar con loadeddata
+            if (DOM.cinematicVideo.readyState >= 3) {
+                handleCanPlay();
+            }
+        };
+
+        // Función para manejar errores de carga
+        const handleError = () => {
+            DOM.cinematicVideo.removeEventListener('canplay', handleCanPlay);
+            DOM.cinematicVideo.removeEventListener('loadeddata', handleLoadedData);
+            DOM.cinematicVideo.removeEventListener('error', handleError);
+            if (timeoutId) clearTimeout(timeoutId);
+            console.error('Error al cargar video:', videoSrc);
+            // Continuar aunque haya error después de un breve delay
+            setTimeout(() => {
+                DOM.skipHint.classList.add('visible');
+                // Auto-continuar después de mostrar el hint
+                setTimeout(() => {
+                    endCinematic(resolve);
+                }, 2000);
+            }, 1000);
+        };
+
+        // Escuchar cuando el video está listo para reproducir
+        DOM.cinematicVideo.addEventListener('canplay', handleCanPlay);
+        DOM.cinematicVideo.addEventListener('loadeddata', handleLoadedData);
+        DOM.cinematicVideo.addEventListener('error', handleError);
 
         // Cuando termine el video
-        DOM.cinematicVideo.addEventListener('ended', function onEnded() {
-            DOM.cinematicVideo.removeEventListener('ended', onEnded);
+        const handleEnded = function onEnded() {
+            DOM.cinematicVideo.removeEventListener('ended', handleEnded);
+            if (timeoutId) clearTimeout(timeoutId);
             endCinematic(resolve);
-        });
+        };
+        DOM.cinematicVideo.addEventListener('ended', handleEnded);
 
-        // Guardar resolve para poder usarlo en skip
+        // Guardar resolve y timeout para poder usarlos en skip
         DOM.cinematicScreen.cinematicResolve = resolve;
+        DOM.cinematicScreen.cinematicTimeout = timeoutId;
+
+        // Agregar listener para cuando el usuario interactúe (para activar sonido si fue necesario silenciarlo)
+        const handleUserInteraction = () => {
+            if (DOM.cinematicVideo.muted && DOM.cinematicVideo.readyState >= 2) {
+                DOM.cinematicVideo.muted = false;
+                DOM.cinematicVideo.volume = 0.8;
+            }
+            document.removeEventListener('click', handleUserInteraction);
+            document.removeEventListener('keydown', handleUserInteraction);
+            document.removeEventListener('touchstart', handleUserInteraction);
+        };
+        document.addEventListener('click', handleUserInteraction, { once: true });
+        document.addEventListener('keydown', handleUserInteraction, { once: true });
+        document.addEventListener('touchstart', handleUserInteraction, { once: true });
+
+        // Si el video ya está listo (readyState >= 3), intentar reproducir inmediatamente
+        if (DOM.cinematicVideo.readyState >= 3) {
+            setTimeout(() => {
+                handleCanPlay();
+            }, 100);
+        }
     });
 }
 
 function skipCinematic() {
     if (DOM.cinematicScreen.cinematicResolve) {
+        // Limpiar timeout si existe
+        if (DOM.cinematicScreen.cinematicTimeout) {
+            clearTimeout(DOM.cinematicScreen.cinematicTimeout);
+        }
         DOM.cinematicVideo.pause();
         endCinematic(DOM.cinematicScreen.cinematicResolve);
     }
@@ -937,6 +1109,12 @@ function endCinematic(resolve) {
 // CARGAR DECISIÓN
 // ============================================
 async function loadDecision() {
+    // Verificar que no se haya completado el juego
+    if (gameState.currentDecision >= decisionsData.length) {
+        showEnding();
+        return;
+    }
+    
     // Obtener el índice real de la decisión usando el orden aleatorizado
     const realDecisionIndex = gameState.randomizedOrder[gameState.currentDecision];
     const decision = decisionsData[realDecisionIndex];

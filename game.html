@@ -14,10 +14,10 @@
                 <div class="indicator-header">
                     <span class="indicator-icon">💰</span>
                     <span>Presupuesto</span>
+                    <span class="indicator-value" id="valuePresupuesto">50</span>
                 </div>
                 <div class="indicator-bar-container">
                     <div class="indicator-bar presupuesto" id="barPresupuesto" style="width: 50%">
-                        <span class="indicator-value" id="valuePresupuesto">50</span>
                     </div>
                 </div>
             </div>
@@ -26,10 +26,10 @@
                 <div class="indicator-header">
                     <span class="indicator-icon">❤️</span>
                     <span>Popularidad</span>
+                    <span class="indicator-value" id="valuePopularidad">50</span>
                 </div>
                 <div class="indicator-bar-container">
                     <div class="indicator-bar popularidad" id="barPopularidad" style="width: 50%">
-                        <span class="indicator-value" id="valuePopularidad">50</span>
                     </div>
                 </div>
             </div>
@@ -38,10 +38,10 @@
                 <div class="indicator-header">
                     <span class="indicator-icon">⚡</span>
                     <span>Poder</span>
+                    <span class="indicator-value" id="valuePoder">50</span>
                 </div>
                 <div class="indicator-bar-container">
                     <div class="indicator-bar poder" id="barPoder" style="width: 50%">
-                        <span class="indicator-value" id="valuePoder">50</span>
                     </div>
                 </div>
             </div>
@@ -56,8 +56,7 @@
     <!-- Pantalla de video cinemático (obligatorio) -->
     <div class="cinematic-screen" id="cinematicScreen">
         <div class="cinematic-content">
-            <video id="cinematicVideo" class="cinematic-video">
-                <source src="" type="video/mp4">
+            <video id="cinematicVideo" class="cinematic-video" preload="auto" playsinline autoplay>
                 Tu navegador no soporta el elemento de video.
             </video>
             <div class="cinematic-skip-hint" id="skipHint">

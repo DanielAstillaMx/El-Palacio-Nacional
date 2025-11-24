@@ -60,6 +60,7 @@ body.fade-out {
     letter-spacing: 0.5px;
     text-transform: uppercase;
     color: #888;
+    justify-content: space-between;
 }
 
 .indicator-icon {
@@ -97,15 +98,12 @@ body.fade-out {
 }
 
 .indicator-value {
-    position: absolute;
-    right: -35px;
-    top: 50%;
-    transform: translateY(-50%);
     font-size: 0.85rem;
     font-weight: 700;
     color: #fff;
     min-width: 30px;
     text-align: right;
+    margin-left: auto;
 }
 
 /* ============================================
