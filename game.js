@@ -694,50 +694,182 @@ const decisionsData = [
 ];
 
 // ============================================
+// FUNCIONES AUXILIARES PARA VERIFICAR DECISIONES
+// ============================================
+function hasNegotiatedWithCrime() {
+    // Verificar si se eligió la opción de negociación con grupos criminales (decisión ID 5, opción 2)
+    return gameState.decisions.some(d => {
+        if (d.decisionId === 5) {
+            const decision = decisionsData.find(dd => dd.id === 5);
+            if (decision && d.optionIndex === 2) { // Opción 2 es "Negociación secreta con grupos criminales"
+                return true;
+            }
+        }
+        return false;
+    });
+}
+
+function hasAcceptedInfluencers() {
+    // Verificar si se aceptaron influencers (decisión ID 10, opción 0 o 1)
+    return gameState.decisions.some(d => {
+        if (d.decisionId === 10) {
+            const decision = decisionsData.find(dd => dd.id === 10);
+            if (decision && (d.optionIndex === 0 || d.optionIndex === 1)) {
+                return true;
+            }
+        }
+        return false;
+    });
+}
+
+function hasCorruptDecisions() {
+    // Verificar decisiones corruptas (proteger corruptos, encubrir escándalos, etc.)
+    return gameState.decisions.some(d => {
+        // Decisión 4: Proteger al Secretario corrupto (opción 0)
+        if (d.decisionId === 4 && d.optionIndex === 0) {
+            return true;
+        }
+        // Decisión 12: Encubrir escándalo tecnológico (opción 2)
+        if (d.decisionId === 12 && d.optionIndex === 2) {
+            return true;
+        }
+        // Se pueden agregar más verificaciones de decisiones corruptas según se necesite
+        return false;
+    });
+}
+
+function hasTechDecisions() {
+    // Verificar decisiones tecnológicas/pro-IA/mega-proyectos aprobados
+    return gameState.decisions.some(d => {
+        // Decisión 7: Mega-Proyecto (Tren del Sureste) - aprobado si opción 0 o 1
+        if (d.decisionId === 7 && (d.optionIndex === 0 || d.optionIndex === 1)) {
+            return true;
+        }
+        // Verificar otras decisiones tecnológicas por título/contexto
+        const decision = decisionsData.find(dd => dd.id === d.decisionId);
+        if (decision) {
+            const title = decision.title.toLowerCase();
+            const context = decision.context.join(' ').toLowerCase();
+            // Solo contar si se aprobó (no canceló) una decisión tecnológica
+            const isTechRelated = title.includes('tecnolog') || title.includes('ia') || 
+                                 title.includes('inteligencia artificial') || 
+                                 title.includes('automatiz') ||
+                                 context.includes('tecnolog') || context.includes('automatiz');
+            // Si es relacionada con tecnología y no es la opción de cancelar (última opción)
+            if (isTechRelated && d.optionIndex < decision.options.length - 1) {
+                return true;
+            }
+        }
+        return false;
+    });
+}
+
+function hasLowCorruption() {
+    // Verificar si se tomaron decisiones transparentes (opuesto a corruptas)
+    // Pedir renuncia de corruptos, auditorías transparentes, investigaciones públicas, etc.
+    return gameState.decisions.some(d => {
+        // Decisión 4: Pedir renuncia (opción 1) o auditoría transparente (opción 2)
+        if (d.decisionId === 4 && (d.optionIndex === 1 || d.optionIndex === 2)) {
+            return true;
+        }
+        // Decisión 12: Investigación pública del escándalo tecnológico (opción 0)
+        if (d.decisionId === 12 && d.optionIndex === 0) {
+            return true;
+        }
+        return false;
+    });
+}
+
+// ============================================
 // BASE DE DATOS DE FINALES
 // ============================================
 const endings = {
-    estadista: {
-        title: "El Estadista Transformador",
-        subtitle: "Un legado de equilibrio y progreso",
-        icon: "👑",
-        description: "Dejaste México mejor de lo que lo encontraste. Mantuviste el equilibrio entre eficiencia y democracia, entre desarrollo y responsabilidad fiscal. Las generaciones futuras estudiarán tu sexenio como ejemplo de liderazgo transformador. Tu nombre ingresa al panteón de los grandes presidentes mexicanos.",
-        condition: (s) => s.popularidad > 60 && s.presupuesto > 50
+    presidentePueblo: {
+        title: "El Presidente del Pueblo",
+        subtitle: "Lograste ganarte a la gente, aunque sacrificaste eficiencia y poder político",
+        icon: "🟢",
+        description: "Tu administración acabó sin lujos, sin avances espectaculares y con un gobierno que muchas veces tuvo que improvisar. Pero la gente te quiere: fuiste \"el que sí escuchó\". Los informes independientes concluyen que tu mayor éxito fue haber mantenido un clima social estable. La economía terminó débil y el congreso ignoró varias de tus reformas, pero terminaste como una figura querida, recordada por sensibilidad más que por resultados.",
+        condition: (s) => s.popularidad > 80 && s.presupuesto >= 40 && s.presupuesto <= 70 && s.poder < 60
     },
-    autoritario: {
-        title: "El Autoritario Eficiente",
-        subtitle: "Progreso a costa de la democracia",
-        icon: "⚔️",
-        description: "México avanzó bajo tu gobierno... pero a qué costo. Construiste infraestructura imponente sobre una montaña de libertades suprimidas. Los trenes funcionan, pero las voces críticas fueron silenciadas. La historia te recordará con ambigüedad: ¿visionario necesario o tirano eficiente?",
-        condition: (s) => s.poder > 70 && s.popularidad < 40
+    reformadorEtico: {
+        title: "El Reformador Ético",
+        subtitle: "Rompes con las prácticas tradicionales y limpias gran parte del sistema",
+        icon: "🟢",
+        description: "No fue fácil. Perdiste aliados, enfrentaste campañas de desprestigio y estuviste al borde de una crisis política. Pero lograste que el país diera un giro real en temas de corrupción, transparencia y justicia. Los organismos internacionales califican tu periodo como \"el renacimiento democrático\". Aunque dejaste enemigos poderosos, lograste plantarte como un ejemplo improbable de integridad.",
+        condition: (s) => s.presupuesto > 70 && s.popularidad > 60 && s.poder > 60 && hasLowCorruption(),
+        video: "assets/Final Reformador Etico.mp4"
     },
-    populista: {
-        title: "El Populista Querido",
-        subtitle: "Amado pero ineficiente",
-        icon: "❤️",
-        description: "Te amaron... pero no pudiste gobernar efectivamente. Dejaste las arcas vacías y las instituciones debilitadas, pero tu carisma conquistó corazones. México te dice adiós con lágrimas, sin saber si son de amor o de lástima por las oportunidades perdidas.",
-        condition: (s) => s.popularidad > 60 && s.presupuesto < 30
+    tecnocrataEficiente: {
+        title: "El Tecnócrata Eficiente",
+        subtitle: "La economía crece, pero el costo social y político es alto",
+        icon: "🟦",
+        description: "Las cifras económicas de tu administración se estudiarán en universidades durante décadas: superávit histórico, inflación controlada, inversión extranjera y un sistema fiscal más fuerte que nunca. Pero la población lo resintió: protestas, desigualdad y acusaciones de elitismo. Eres recordado como un genio frío, eficiente… pero desconectado del pueblo.",
+        condition: (s) => s.presupuesto > 90 && s.popularidad < 60 && s.poder >= 40 && s.poder <= 70
     },
-    tecnocrata: {
-        title: "El Tecnócrata Invisible",
-        subtitle: "Números fríos, país desconectado",
-        icon: "📊",
-        description: "Los indicadores económicos mejoraron. La gente no. Dejaste un país próspero en estadísticas pero desconectado en emociones, donde el PIB creció pero la esperanza se marchitó. Los economistas te aplauden. La ciudadanía apenas te recuerda.",
-        condition: (s) => s.presupuesto > 60 && s.popularidad < 40 && s.poder < 60
+    presidenteAutoritario: {
+        title: "El Presidente Autoritario",
+        subtitle: "Controlaste al país por la fuerza política y legal, debilitando contrapesos",
+        icon: "🟥",
+        description: "El Congreso terminó subordinado a ti, gobernaste por decreto y controlaste a los sindicatos, gobernadores y medios. Los organismos internacionales te acusan de centralizar demasiado poder, pero tu aprobación interna está dividida: para algunos fuiste firme, para otros, represor. Tu legado se estudia como ejemplo moderno de cómo se construye un gobierno hiperconcentrado.",
+        condition: (s) => s.poder > 90 && s.popularidad < 50 && s.presupuesto >= 30 && s.presupuesto <= 70,
+        video: "assets/Final Autoritario.mp4"
     },
-    colapso: {
-        title: "El Colapso Institucional",
-        subtitle: "Cuando todo se derrumbó",
-        icon: "💥",
-        description: "Todo se vino abajo. El Congreso inició juicio político. Las calles arden en protesta. El peso se desplomó. Entraste prometiendo transformación y dejaste ruinas. La pregunta histórica será: ¿eras incompetente o fuiste saboteado? Ambas respuestas te condenan.",
-        condition: (s) => s.poder < 30 && s.presupuesto < 30 && s.popularidad < 30
+    presidenteCapturado: {
+        title: "El Presidente Capturado",
+        subtitle: "Pierdes el control del país, atrapado por intereses externos y grupos criminales",
+        icon: "🟤",
+        description: "No lograste controlar el gabinete, ni al Congreso, ni mucho menos a los grupos criminales. Terminas tu mandato prácticamente aislado, rodeado de traidores y subordinado a intereses externos. En reportes confidenciales te describen como \"un rehén del sistema\". El país terminó en crisis, y tú fuiste una figura decorativa en tu propio gobierno.",
+        condition: (s) => s.poder < 40 && s.popularidad < 50 && s.presupuesto < 50 && hasCorruptDecisions(),
+        video: "assets/Final Capturado2.mp4"
     },
-    equilibrista: {
-        title: "El Equilibrista Mediocre",
-        subtitle: "Ni malo ni bueno, solo olvidable",
-        icon: "⚖️",
-        description: "No fuiste el peor... tampoco el mejor. Cruzaste la meta sin gloria ni desastre. Navegaste el sexenio evitando catástrofes pero sin crear grandeza. En 10 años, cuando alguien pregunte '¿Quién gobernó de 2024 a 2030?', nadie recordará tu nombre. El castigo del olvido.",
-        condition: (s) => s.presupuesto >= 40 && s.presupuesto <= 60 && s.popularidad >= 40 && s.popularidad <= 60 && s.poder >= 40 && s.poder <= 60
+    colapsoNacional: {
+        title: "Colapso Nacional",
+        subtitle: "El país entra en caos: economía rota, protestas masivas, crisis de seguridad",
+        icon: "🔥",
+        description: "Tu administración pasará a la historia como la peor crisis nacional del siglo. La deuda explotó, la inflación se salió de control, y los servicios públicos colapsaron. Protestas recorrieron las ciudades, la violencia aumentó y terminaste suplicando al Congreso medidas extraordinarias que nunca llegaron. No caíste por golpe de Estado… pero estuviste cerca.",
+        condition: (s) => s.presupuesto < 20 && s.popularidad < 30 && s.poder < 40
+    },
+    golpeEstadoSuave: {
+        title: "Golpe de Estado Suave",
+        subtitle: "El establishment te reemplaza discretamente antes de terminar el mandato",
+        icon: "🔥",
+        description: "No hubo tanques en las calles ni violencia visible. Simplemente un día tu Secretario de Gobernación anunció que estabas \"en reposo por salud\". El Congreso designó un relevo \"provisional\" que terminó dirigiendo el país. Tus últimos meses los viviste recluido, fuera de cámaras, sin poder defenderte. Un final silencioso… pero devastador.",
+        condition: (s) => s.poder < 30 && s.popularidad < 30 && (hasNegotiatedWithCrime() || hasCorruptDecisions())
+    },
+    presidenteMediatico: {
+        title: "El Presidente Mediático",
+        subtitle: "Gobernaste más con cámara que con políticas reales",
+        icon: "🟡",
+        description: "Tus entrevistas virales, TikToks desde palacio y participaciones constantes en medios lograron algo inaudito: jamás perdiste popularidad. Pero los logros reales fueron escasos. Los expertos describen tu gobierno como una \"telepresidencia\": entretenida, emocional, divertida… pero superficial. Tu figura quedó como un ícono pop más que como un líder histórico.",
+        condition: (s) => s.popularidad > 80 && s.poder >= 40 && s.poder <= 60 && s.presupuesto >= 30 && s.presupuesto <= 60 && hasAcceptedInfluencers()
+    },
+    progresoEstabilidad: {
+        title: "Progreso con Estabilidad",
+        subtitle: "Nada espectacular, nada desastroso. Un gobierno funcional y estable",
+        icon: "🟢",
+        description: "Tu administración termina con indicadores aceptables: crecimiento moderado, estabilidad social razonable y un nivel de poder político suficiente para operar sin crisis. No fuiste héroe ni villano. No cambiaste el sistema, pero tampoco lo empeoraste. Tu legado: \"cumplió, sin brillar\".",
+        condition: (s) => s.presupuesto >= 50 && s.presupuesto <= 75 && s.popularidad >= 50 && s.popularidad <= 75 && s.poder >= 50 && s.poder <= 75
+    },
+    mausoleoCorrupcion: {
+        title: "El Mausoleo de la Corrupción",
+        subtitle: "Un gobierno eficaz para robar, letal para el país",
+        icon: "⚫",
+        description: "Los contratos inflados, las empresas fantasma y los escándalos grabados por periodistas marcaron tu administración. La economía no colapsó, porque supiste manejar el poder… pero la sociedad quedó devastada. Al terminar tu mandato, múltiples investigaciones quedan abiertas. Tu figura se convierte en la representación perfecta del sistema podrido que querías exponer.",
+        condition: (s) => s.presupuesto > 70 && s.poder > 70 && s.popularidad < 40 && hasCorruptDecisions()
+    },
+    industrializacionAcelerada: {
+        title: "Industrialización Acelerada",
+        subtitle: "Conviertes al país en una potencia tecnológica, pero a un costo social alto",
+        icon: "🟣",
+        description: "A fuerza de inversión extranjera, automatización y mega-infraestructura, tu administración convirtió al país en un polo mundial de tecnología. Pero cientos de miles de empleos desaparecieron, provocando una brecha social enorme. Eres recordado como el presidente que modernizó el país a una velocidad despiadada.",
+        condition: (s) => s.presupuesto > 85 && s.poder > 70 && s.popularidad >= 40 && s.popularidad <= 70 && hasTechDecisions()
+    },
+    presidenteSilenciado: {
+        title: "El Presidente Silenciado",
+        subtitle: "Una filtración destruye tu gobierno en horas",
+        icon: "🟤",
+        description: "Un audio filtrado exhibe tus negociaciones con grupos criminales. Las protestas son inmediatas. Gobernadores te desconocen, ministros renuncian en cadena y la prensa internacional exige tu destitución. No renunciaste: te renunciaron. Termina tu historia con un mensaje claro: \"el crimen no se negocia sin consecuencias\".",
+        condition: (s) => hasNegotiatedWithCrime() // Este final se activa si se negoció con crimen (50% GAME OVER)
     }
 };
 
@@ -1389,13 +1521,26 @@ function determineEnding() {
     const s = gameState;
     
     // Verificar condiciones en orden de prioridad
-    if (endings.colapso.condition(s)) return endings.colapso;
-    if (endings.estadista.condition(s)) return endings.estadista;
-    if (endings.autoritario.condition(s)) return endings.autoritario;
-    if (endings.populista.condition(s)) return endings.populista;
-    if (endings.tecnocrata.condition(s)) return endings.tecnocrata;
+    // 1. Finales especiales/catastróficos primero
+    if (endings.presidenteSilenciado.condition(s)) return endings.presidenteSilenciado;
+    if (endings.colapsoNacional.condition(s)) return endings.colapsoNacional;
+    if (endings.golpeEstadoSuave.condition(s)) return endings.golpeEstadoSuave;
+    if (endings.presidenteCapturado.condition(s)) return endings.presidenteCapturado;
+    if (endings.mausoleoCorrupcion.condition(s)) return endings.mausoleoCorrupcion;
     
-    return endings.equilibrista;
+    // 2. Finales específicos con condiciones claras
+    if (endings.reformadorEtico.condition(s)) return endings.reformadorEtico;
+    if (endings.presidentePueblo.condition(s)) return endings.presidentePueblo;
+    if (endings.tecnocrataEficiente.condition(s)) return endings.tecnocrataEficiente;
+    if (endings.presidenteAutoritario.condition(s)) return endings.presidenteAutoritario;
+    if (endings.presidenteMediatico.condition(s)) return endings.presidenteMediatico;
+    if (endings.industrializacionAcelerada.condition(s)) return endings.industrializacionAcelerada;
+    
+    // 3. Final neutral por defecto
+    if (endings.progresoEstabilidad.condition(s)) return endings.progresoEstabilidad;
+    
+    // 4. Si no cumple ninguna condición específica, retornar progreso con estabilidad como default
+    return endings.progresoEstabilidad;
 }
 
 // ============================================
@@ -1404,6 +1549,22 @@ function determineEnding() {
 function showEnding() {
     const ending = determineEnding();
 
+    // Si el final tiene un video, reproducirlo primero
+    if (ending.video) {
+        playVideo(ending.video).then(() => {
+            // Después de que termine el video, mostrar la pantalla de final
+            displayEndingContent(ending);
+        });
+    } else {
+        // Si no hay video, mostrar directamente la pantalla de final
+        displayEndingContent(ending);
+    }
+}
+
+// ============================================
+// MOSTRAR CONTENIDO DEL FINAL
+// ============================================
+function displayEndingContent(ending) {
     DOM.endingContent.innerHTML = `
         <h1 class="ending-title">${ending.title}</h1>
         <p class="ending-subtitle">${ending.subtitle}</p>
