@@ -804,7 +804,8 @@ const endings = {
         subtitle: "La economía crece, pero el costo social y político es alto",
         icon: "🟦",
         description: "Las cifras económicas de tu administración se estudiarán en universidades durante décadas: superávit histórico, inflación controlada, inversión extranjera y un sistema fiscal más fuerte que nunca. Pero la población lo resintió: protestas, desigualdad y acusaciones de elitismo. Eres recordado como un genio frío, eficiente… pero desconectado del pueblo.",
-        condition: (s) => s.presupuesto > 90 && s.popularidad < 60 && s.poder >= 40 && s.poder <= 70
+        condition: (s) => s.presupuesto > 90 && s.popularidad < 60 && s.poder >= 40 && s.poder <= 70,
+        video: "assets/FinalElTecnocrataEficiente.mp4"
     },
     presidenteAutoritario: {
         title: "El Presidente Autoritario",
@@ -827,49 +828,56 @@ const endings = {
         subtitle: "El país entra en caos: economía rota, protestas masivas, crisis de seguridad",
         icon: "🔥",
         description: "Tu administración pasará a la historia como la peor crisis nacional del siglo. La deuda explotó, la inflación se salió de control, y los servicios públicos colapsaron. Protestas recorrieron las ciudades, la violencia aumentó y terminaste suplicando al Congreso medidas extraordinarias que nunca llegaron. No caíste por golpe de Estado… pero estuviste cerca.",
-        condition: (s) => s.presupuesto < 20 && s.popularidad < 30 && s.poder < 40
+        condition: (s) => s.presupuesto < 20 && s.popularidad < 30 && s.poder < 40,
+        video: "assets/Final_Colapso Nacional.mp4"
     },
     golpeEstadoSuave: {
         title: "Golpe de Estado Suave",
         subtitle: "El establishment te reemplaza discretamente antes de terminar el mandato",
         icon: "🔥",
         description: "No hubo tanques en las calles ni violencia visible. Simplemente un día tu Secretario de Gobernación anunció que estabas \"en reposo por salud\". El Congreso designó un relevo \"provisional\" que terminó dirigiendo el país. Tus últimos meses los viviste recluido, fuera de cámaras, sin poder defenderte. Un final silencioso… pero devastador.",
-        condition: (s) => s.poder < 30 && s.popularidad < 30 && (hasNegotiatedWithCrime() || hasCorruptDecisions())
+        condition: (s) => s.poder < 30 && s.popularidad < 30 && (hasNegotiatedWithCrime() || hasCorruptDecisions()),
+        video: "assets/Final GolpeSuave.mp4"
     },
     presidenteMediatico: {
         title: "El Presidente Mediático",
         subtitle: "Gobernaste más con cámara que con políticas reales",
         icon: "🟡",
         description: "Tus entrevistas virales, TikToks desde palacio y participaciones constantes en medios lograron algo inaudito: jamás perdiste popularidad. Pero los logros reales fueron escasos. Los expertos describen tu gobierno como una \"telepresidencia\": entretenida, emocional, divertida… pero superficial. Tu figura quedó como un ícono pop más que como un líder histórico.",
-        condition: (s) => s.popularidad > 80 && s.poder >= 40 && s.poder <= 60 && s.presupuesto >= 30 && s.presupuesto <= 60 && hasAcceptedInfluencers()
+        condition: (s) => s.popularidad > 80 && s.poder >= 40 && s.poder <= 60 && s.presupuesto >= 30 && s.presupuesto <= 60 && hasAcceptedInfluencers(),
+        video: "assets/FinalNeutralBueno.mp4"
     },
     progresoEstabilidad: {
         title: "Progreso con Estabilidad",
         subtitle: "Nada espectacular, nada desastroso. Un gobierno funcional y estable",
         icon: "🟢",
         description: "Tu administración termina con indicadores aceptables: crecimiento moderado, estabilidad social razonable y un nivel de poder político suficiente para operar sin crisis. No fuiste héroe ni villano. No cambiaste el sistema, pero tampoco lo empeoraste. Tu legado: \"cumplió, sin brillar\".",
-        condition: (s) => s.presupuesto >= 50 && s.presupuesto <= 75 && s.popularidad >= 50 && s.popularidad <= 75 && s.poder >= 50 && s.poder <= 75
+        condition: (s) => s.presupuesto >= 50 && s.presupuesto <= 75 && s.popularidad >= 50 && s.popularidad <= 75 && s.poder >= 50 && s.poder <= 75,
+        video: "assets/FinalNeutralBueno.mp4"
     },
     mausoleoCorrupcion: {
         title: "El Mausoleo de la Corrupción",
         subtitle: "Un gobierno eficaz para robar, letal para el país",
         icon: "⚫",
         description: "Los contratos inflados, las empresas fantasma y los escándalos grabados por periodistas marcaron tu administración. La economía no colapsó, porque supiste manejar el poder… pero la sociedad quedó devastada. Al terminar tu mandato, múltiples investigaciones quedan abiertas. Tu figura se convierte en la representación perfecta del sistema podrido que querías exponer.",
-        condition: (s) => s.presupuesto > 70 && s.poder > 70 && s.popularidad < 40 && hasCorruptDecisions()
+        condition: (s) => s.presupuesto > 70 && s.poder > 70 && s.popularidad < 40 && hasCorruptDecisions(),
+        video: "assets/FinalElMausoleoDeLaCorrupción.mp4"
     },
     industrializacionAcelerada: {
         title: "Industrialización Acelerada",
         subtitle: "Conviertes al país en una potencia tecnológica, pero a un costo social alto",
         icon: "🟣",
         description: "A fuerza de inversión extranjera, automatización y mega-infraestructura, tu administración convirtió al país en un polo mundial de tecnología. Pero cientos de miles de empleos desaparecieron, provocando una brecha social enorme. Eres recordado como el presidente que modernizó el país a una velocidad despiadada.",
-        condition: (s) => s.presupuesto > 85 && s.poder > 70 && s.popularidad >= 40 && s.popularidad <= 70 && hasTechDecisions()
+        condition: (s) => s.presupuesto > 85 && s.poder > 70 && s.popularidad >= 40 && s.popularidad <= 70 && hasTechDecisions(),
+        video: ""
     },
     presidenteSilenciado: {
         title: "El Presidente Silenciado",
         subtitle: "Una filtración destruye tu gobierno en horas",
         icon: "🟤",
         description: "Un audio filtrado exhibe tus negociaciones con grupos criminales. Las protestas son inmediatas. Gobernadores te desconocen, ministros renuncian en cadena y la prensa internacional exige tu destitución. No renunciaste: te renunciaron. Termina tu historia con un mensaje claro: \"el crimen no se negocia sin consecuencias\".",
-        condition: (s) => hasNegotiatedWithCrime() // Este final se activa si se negoció con crimen (50% GAME OVER)
+        condition: (s) => hasNegotiatedWithCrime(), // Este final se activa si se negoció con crimen (50% GAME OVER)
+        video: ""
     }
 };
 
