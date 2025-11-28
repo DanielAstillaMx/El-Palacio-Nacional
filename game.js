@@ -844,8 +844,7 @@ const endings = {
         subtitle: "Gobernaste más con cámara que con políticas reales",
         icon: "🟡",
         description: "Tus entrevistas virales, TikToks desde palacio y participaciones constantes en medios lograron algo inaudito: jamás perdiste popularidad. Pero los logros reales fueron escasos. Los expertos describen tu gobierno como una \"telepresidencia\": entretenida, emocional, divertida… pero superficial. Tu figura quedó como un ícono pop más que como un líder histórico.",
-        condition: (s) => s.popularidad > 80 && s.poder >= 40 && s.poder <= 60 && s.presupuesto >= 30 && s.presupuesto <= 60 && hasAcceptedInfluencers(),
-        video: "assets/FinalNeutralBueno.mp4"
+        condition: (s) => s.popularidad > 80 && s.poder >= 40 && s.poder <= 60 && s.presupuesto >= 30 && s.presupuesto <= 60 && hasAcceptedInfluencers()
     },
     progresoEstabilidad: {
         title: "Progreso con Estabilidad",
